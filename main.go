@@ -9,6 +9,7 @@ import (
 func init() {
 	initializers.LoadEnv()
 	initializers.ConnectDatabase()
+	initializers.SyncDatabase()
 }
 
 func main() {
