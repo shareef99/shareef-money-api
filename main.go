@@ -3,7 +3,13 @@ package main
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/shareef99/shareef-money-api/features/users"
+	"github.com/shareef99/shareef-money-api/initializers"
 )
+
+func init() {
+	initializers.LoadEnv()
+	initializers.ConnectDatabase()
+}
 
 func main() {
 	router := gin.Default()
