@@ -1,0 +1,20 @@
+meta {
+  name: Create
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{URL}}/users
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "name":             "Nadeem Shareef",
+    "email":            "random7@gmail.com",
+    "mobile":           "1234567898",  
+    "refer_code":       "random8"
+  }
+}
