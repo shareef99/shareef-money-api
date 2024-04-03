@@ -2,12 +2,97 @@ package users
 
 import (
 	"errors"
+	"math/rand"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/shareef99/shareef-money-api/initializers"
 	"gorm.io/gorm"
 )
+
+func generateRandomString(length int) string {
+	const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+	seed := rand.NewSource(time.Now().UnixNano())
+	random := rand.New(seed)
+
+	result := make([]byte, length)
+	for i := range result {
+		result[i] = charset[random.Intn(len(charset))]
+	}
+	return string(result)
+}
+
+func Signin(c *gin.Context) {
+	var body struct {
+		Name  string `binding:"required"`
+		Email string `binding:"required"`
+	}
+
+	if err := c.ShouldBindJSON(&body); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "Invalid request body",
+			"error":   err.Error(),
+		})
+		return
+	}
+
+	var user User
+	if err := initializers.DB.Where("email = ?", body.Email).Find(&user).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			c.JSON(http.StatusNotFound, gin.H{
+				"message": "User doesn't exist",
+				"error":   err.Error(),
+			})
+			return
+		} else {
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"message": "Failed to signin",
+				"error":   err.Error(),
+			})
+			return
+		}
+	}
+
+	if user.ID == 0 {
+		referCode := generateRandomString(6)
+
+		newUser := User{
+			Name:      body.Name,
+			Email:     body.Email,
+			ReferCode: referCode,
+		}
+
+		if err := initializers.DB.Create(&newUser).Error; err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"message": "Failed to create user",
+				"error":   err.Error(),
+			})
+			return
+		}
+
+		var createdUser User
+
+		if err := initializers.DB.First(&createdUser, newUser.ID).Error; err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"error":   "Failed to fetch created user",
+				"message": err.Error(),
+			})
+			return
+		}
+
+		c.JSON(http.StatusOK, gin.H{
+			"message": "User Signup successfully",
+			"user":    createdUser,
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "User Signin successfully",
+		"user":    user,
+	})
+}
 
 func GetUsers(c *gin.Context) {
 
@@ -59,7 +144,7 @@ func CreateUser(c *gin.Context) {
 	var body struct {
 		Name           string  `binding:"required"`
 		Email          string  `binding:"required,email"`
-		Mobile         string  `binding:"required"`
+		Mobile         *string `binding:"omitempty"`
 		Currency       *string `binding:"omitempty"`
 		MonthStartDate *uint8  `json:"month_start_date" binding:"omitempty"`
 		WeekStartDay   *string `json:"week_start_day" binding:"omitempty,oneof=mon tue wed thu fri sat sun"`
