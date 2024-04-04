@@ -1,0 +1,21 @@
+meta {
+  name: Update
+  type: http
+  seq: 6
+}
+
+put {
+  url: {{URL}}/users?id=8
+  body: json
+  auth: none
+}
+
+query {
+  id: 8
+}
+
+body:json {
+  {
+    "name": "Updated Name"
+  }
+}
