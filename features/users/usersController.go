@@ -212,3 +212,70 @@ func DeleteUser(c *gin.Context) {
 		"message": "User deleted!",
 	})
 }
+
+func UpdateUser(c *gin.Context) {
+	var body struct {
+		Name           *string `binding:"omitempty"`
+		Mobile         *string `binding:"omitempty"`
+		Currency       *string `binding:"omitempty"`
+		MonthStartDate *uint8  `json:"month_start_date" binding:"omitempty"`
+		WeekStartDay   *string `json:"week_start_day" binding:"omitempty,oneof=mon tue wed thu fri sat sun"`
+	}
+
+	if err := c.ShouldBindJSON(&body); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error":   "Invalid body type",
+			"message": err.Error(),
+		})
+		return
+	}
+
+	id := c.Query("id")
+
+	var user User
+	err := initializers.DB.First(&user, id)
+
+	if err.Error != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error":   "Invalid User ID",
+			"message": err.Error.Error(),
+			"id":      id,
+		})
+		return
+	}
+
+	if body.Name != nil {
+		user.Name = *body.Name
+	}
+
+	if body.Mobile != nil {
+		if *body.Mobile == "null" {
+			user.Mobile = nil
+		} else {
+			user.Mobile = body.Mobile
+		}
+	}
+
+	if body.Currency != nil {
+		user.Currency = *body.Currency
+	}
+	if body.MonthStartDate != nil {
+		user.MonthStartDate = *body.MonthStartDate
+	}
+	if body.WeekStartDay != nil {
+		user.WeekStartDay = *body.WeekStartDay
+	}
+
+	if err := initializers.DB.Save(&user).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error":   "Failed to update user",
+			"message": err.Error,
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "User updated successfully",
+		"user":    user,
+	})
+}

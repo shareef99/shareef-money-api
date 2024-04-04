@@ -11,5 +11,6 @@ func RegisterRoutes(api *gin.RouterGroup) {
 	api.GET("/users/by-id", GetUser)
 	api.POST("/users", CreateUser)
 	api.POST("/users/signin", Signin)
+	api.PUT("/users", UpdateUser)
 	api.DELETE("/users/:id", DeleteUser)
 }
