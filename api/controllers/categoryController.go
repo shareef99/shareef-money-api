@@ -47,7 +47,7 @@ func CreateCategory(c *gin.Context) {
 func GetCategories(c *gin.Context) {
 	var categories []models.Category
 
-	if err := initializers.DB.Find(&categories).Error; err != nil {
+	if err := initializers.DB.Preload("SubCategories").Find(&categories).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error":   "Failed to get categories",
 			"message": err.Error(),
@@ -59,7 +59,31 @@ func GetCategories(c *gin.Context) {
 		"message":    "Categories Fetched!",
 		"categories": categories,
 	})
+}
 
+func GetCategory(c *gin.Context) {
+	categoryId := c.Param("id")
+
+	if categoryId == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Missing category id in path params",
+		})
+	}
+
+	var category models.Category
+
+	if err := initializers.DB.Preload("SubCategories").First(&category, categoryId).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error":   "Failed to get category",
+			"message": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message":  "Category Fetched!",
+		"category": category,
+	})
 }
 
 func GetUserCategories(c *gin.Context) {
@@ -72,9 +96,9 @@ func GetUserCategories(c *gin.Context) {
 		return
 	}
 
-	var user models.User
+	var categories []models.Category
 
-	if err := initializers.DB.Preload("Categories").First(&user, userId).Error; err != nil {
+	if err := initializers.DB.Preload("SubCategories").Where("user_id = ?", userId).Find(&categories).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error":   "Failed to get categories",
 			"message": err.Error(),
@@ -84,7 +108,7 @@ func GetUserCategories(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"message":    "Categories fetched!",
-		"categories": user.Categories,
+		"categories": categories,
 	})
 }
 
