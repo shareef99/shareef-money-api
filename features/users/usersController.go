@@ -8,6 +8,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/shareef99/shareef-money-api/initializers"
+	"github.com/shareef99/shareef-money-api/models"
 	"gorm.io/gorm"
 )
 
@@ -37,7 +38,7 @@ func Signin(c *gin.Context) {
 		return
 	}
 
-	var user User
+	var user models.User
 	if err := initializers.DB.Where("email = ?", body.Email).Find(&user).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			c.JSON(http.StatusNotFound, gin.H{
@@ -57,7 +58,7 @@ func Signin(c *gin.Context) {
 	if user.ID == 0 {
 		referCode := generateRandomString(6)
 
-		newUser := User{
+		newUser := models.User{
 			Name:      body.Name,
 			Email:     body.Email,
 			ReferCode: referCode,
@@ -71,7 +72,7 @@ func Signin(c *gin.Context) {
 			return
 		}
 
-		var createdUser User
+		var createdUser models.User
 
 		if err := initializers.DB.First(&createdUser, newUser.ID).Error; err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{
@@ -96,7 +97,7 @@ func Signin(c *gin.Context) {
 
 func GetUsers(c *gin.Context) {
 
-	var users []User
+	var users []models.User
 
 	if err := initializers.DB.Find(&users).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -122,7 +123,7 @@ func GetUsers(c *gin.Context) {
 func GetUser(c *gin.Context) {
 	id := c.Query("id")
 
-	var user User
+	var user models.User
 	err := initializers.DB.First(&user, id)
 
 	if err.Error != nil {
@@ -159,7 +160,7 @@ func CreateUser(c *gin.Context) {
 		return
 	}
 
-	user := User{
+	user := models.User{
 		Name:      body.Name,
 		Email:     body.Email,
 		Mobile:    body.Mobile,
@@ -197,7 +198,7 @@ func CreateUser(c *gin.Context) {
 func DeleteUser(c *gin.Context) {
 	id := c.Param("id")
 
-	deleteUser := initializers.DB.Delete(&User{}, id)
+	deleteUser := initializers.DB.Delete(&models.User{}, id)
 
 	if deleteUser.Error != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -232,7 +233,7 @@ func UpdateUser(c *gin.Context) {
 
 	id := c.Query("id")
 
-	var user User
+	var user models.User
 	err := initializers.DB.First(&user, id)
 
 	if err.Error != nil {

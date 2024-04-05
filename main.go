@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"github.com/shareef99/shareef-money-api/features/accounts"
 	"github.com/shareef99/shareef-money-api/features/example"
 	"github.com/shareef99/shareef-money-api/features/users"
 	"github.com/shareef99/shareef-money-api/initializers"
@@ -28,6 +29,7 @@ func main() {
 
 	users.RegisterRoutes(apiV1)
 	example.RegisterRoutes(apiV1)
+	accounts.RegisterRouter(apiV1)
 
 	router.Run()
 }
