@@ -1,0 +1,21 @@
+meta {
+  name: Update
+  type: http
+  seq: 4
+}
+
+put {
+  url: {{URL}}/accounts?account_id=1
+  body: json
+  auth: none
+}
+
+query {
+  account_id: 1
+}
+
+body:json {
+  {
+    "amount": 2000.23
+  }
+}

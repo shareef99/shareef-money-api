@@ -1,0 +1,15 @@
+meta {
+  name: By User ID
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{URL}}/accounts/by-user?user_id=8
+  body: none
+  auth: none
+}
+
+query {
+  user_id: 8
+}
