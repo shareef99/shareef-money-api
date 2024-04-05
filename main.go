@@ -3,10 +3,7 @@ package main
 import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-	"github.com/shareef99/shareef-money-api/features/accounts"
-	"github.com/shareef99/shareef-money-api/features/category"
-	"github.com/shareef99/shareef-money-api/features/example"
-	"github.com/shareef99/shareef-money-api/features/users"
+	"github.com/shareef99/shareef-money-api/api/routes"
 	"github.com/shareef99/shareef-money-api/initializers"
 	"github.com/shareef99/shareef-money-api/migrate"
 )
@@ -28,10 +25,7 @@ func main() {
 
 	apiV1 := router.Group("/api/v1")
 
-	users.RegisterRoutes(apiV1)
-	example.RegisterRoutes(apiV1)
-	accounts.RegisterRouter(apiV1)
-	category.RegisterRouter(apiV1)
+	routes.RegisterRoutes(apiV1)
 
 	router.Run()
 }

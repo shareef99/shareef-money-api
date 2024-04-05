@@ -1,12 +1,12 @@
-package category
+package controllers
 
 import (
 	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/shareef99/shareef-money-api/api/models"
 	"github.com/shareef99/shareef-money-api/initializers"
-	"github.com/shareef99/shareef-money-api/models"
 )
 
 func CreateCategory(c *gin.Context) {
