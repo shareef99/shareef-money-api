@@ -1,0 +1,22 @@
+meta {
+  name: Update
+  type: http
+  seq: 5
+}
+
+put {
+  url: {{URL}}/categories?category_id=3
+  body: json
+  auth: none
+}
+
+query {
+  category_id: 3
+}
+
+body:json {
+  {
+    "Name": "false",
+    "IsIncome": true
+  }
+}
