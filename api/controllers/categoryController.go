@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -160,8 +159,6 @@ func UpdateCategory(c *gin.Context) {
 		})
 		return
 	}
-
-	log.Println("Category ID", categoryId)
 
 	var category models.Category
 
