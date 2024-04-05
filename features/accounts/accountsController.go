@@ -118,8 +118,16 @@ func CreateAccount(c *gin.Context) {
 func DeleteAccount(c *gin.Context) {
 	accountId := c.Param("id")
 
-	if err := initializers.DB.Delete(&models.Account{}, accountId).Error; err != nil {
+	if accountId == "" {
 		c.JSON(http.StatusBadRequest, gin.H{
+			"error":   "Missing account_id path param",
+			"message": "Failed to delete account",
+		})
+		return
+	}
+
+	if err := initializers.DB.Delete(&models.Account{}, accountId).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
 			"error":      "Failed to delete account",
 			"message":    err.Error(),
 			"account_id": accountId,
