@@ -1,0 +1,17 @@
+meta {
+  name: Update
+  type: http
+  seq: 3
+}
+
+put {
+  url: {{URL}}/sub-categories/5
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "name": "food sub update"
+  }
+}
