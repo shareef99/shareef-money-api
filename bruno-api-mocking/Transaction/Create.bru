@@ -1,0 +1,22 @@
+meta {
+  name: Create
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{URL}}/transactions
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "user_id": 8,
+    "account_id": 3,
+    "category_id": 3,
+    "type": "expense",
+    "amount": 500,
+    "transaction_at": "2024-04-06T01:15:18.150445+05:30"
+  }
+}
