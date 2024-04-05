@@ -102,7 +102,7 @@ func CreateAccount(c *gin.Context) {
 	result := initializers.DB.Create(&account)
 
 	if err := result.Error; err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
+		c.JSON(http.StatusInternalServerError, gin.H{
 			"error":   "Failed to create account",
 			"message": err.Error(),
 		})

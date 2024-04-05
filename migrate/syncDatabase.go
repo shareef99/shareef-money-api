@@ -6,5 +6,11 @@ import (
 )
 
 func SyncDatabase() {
-	initializers.DB.AutoMigrate(&models.User{}, &models.Account{IsHidden: false}, &models.Category{}, &models.SubCategory{})
+	initializers.DB.AutoMigrate(
+		&models.User{},
+		&models.Account{IsHidden: false},
+		&models.Category{},
+		&models.SubCategory{},
+		&models.Transaction{Type: "expense"},
+	)
 }

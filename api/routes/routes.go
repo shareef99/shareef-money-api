@@ -35,4 +35,11 @@ func RegisterRoutes(api *gin.RouterGroup) {
 	subCategoryGroup.POST("/", controllers.CreateSubCategory)
 	subCategoryGroup.PUT("/:id", controllers.UpdateSubCategory)
 	subCategoryGroup.DELETE("/:id", controllers.DeleteSubCategory)
+
+	transactions := api.Group("/transactions")
+	transactions.GET("/", controllers.GetTransactions)
+	transactions.GET("/account/:id", controllers.GetAccountTransactions)
+	transactions.GET("/user/:id", controllers.GetUserTransactions)
+	transactions.GET("/category/:id", controllers.GetCategoryTransactions)
+	transactions.POST("/", controllers.CreateTransaction)
 }

@@ -124,7 +124,7 @@ func GetUser(c *gin.Context) {
 	id := c.Query("id")
 
 	var user models.User
-	err := initializers.DB.First(&user, id)
+	err := initializers.DB.Preload("Accounts").Preload("Categories").Preload("Transactions").First(&user, id)
 
 	if err.Error != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
