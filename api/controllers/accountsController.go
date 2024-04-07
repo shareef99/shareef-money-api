@@ -73,7 +73,7 @@ func CreateAccount(c *gin.Context) {
 		Name        string  `binding:"required"`
 		Amount      float32 `binding:"required"`
 		Description *string `binding:"omitempty"`
-		IsHidden    bool    `json:"is_hidden" binding:"required"`
+		IsHidden    *bool   `json:"is_hidden" binding:"required"`
 		UserId      uint    `json:"user_id" binding:"required"`
 	}
 
@@ -89,7 +89,7 @@ func CreateAccount(c *gin.Context) {
 		Name:        body.Name,
 		Amount:      body.Amount,
 		Description: body.Description,
-		IsHidden:    body.IsHidden,
+		IsHidden:    *body.IsHidden,
 		UserID:      body.UserId,
 	}
 
