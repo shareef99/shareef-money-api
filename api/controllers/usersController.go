@@ -96,7 +96,6 @@ func Signin(c *gin.Context) {
 }
 
 func GetUsers(c *gin.Context) {
-
 	var users []models.User
 
 	if err := initializers.DB.Find(&users).Error; err != nil {
@@ -121,7 +120,15 @@ func GetUsers(c *gin.Context) {
 }
 
 func GetUser(c *gin.Context) {
-	id := c.Query("id")
+	id := c.Param("id")
+
+	if id == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error":   "Missing user_id in path param",
+			"message": "Missing user_id in path param",
+		})
+		return
+	}
 
 	var user models.User
 	err := initializers.DB.Preload("Accounts").Preload("Categories").Preload("Transactions").First(&user, id)

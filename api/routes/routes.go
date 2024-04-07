@@ -8,7 +8,7 @@ import (
 func RegisterRoutes(api *gin.RouterGroup) {
 	userGroup := api.Group("/users")
 	userGroup.GET("/", controllers.GetUsers)
-	userGroup.GET("/by-id", controllers.GetUser)
+	userGroup.GET("/:id", controllers.GetUser)
 	userGroup.POST("/", controllers.CreateUser)
 	userGroup.POST("/signin", controllers.Signin)
 	userGroup.PUT("/", controllers.UpdateUser)
