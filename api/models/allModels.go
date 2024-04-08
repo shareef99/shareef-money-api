@@ -27,7 +27,7 @@ type Account struct {
 	Description  *string       `json:"description"`
 	IsHidden     bool          `json:"is_hidden" gorm:"default:false"`
 	UserID       uint          `json:"user_id" gorm:"not null"`
-	Transactions []Transaction `json:"transaction" gorm:"foreignKey:AccountID"`
+	Transactions []Transaction `json:"transactions" gorm:"foreignKey:AccountID"`
 }
 
 type Category struct {

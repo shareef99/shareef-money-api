@@ -36,17 +36,18 @@ func GetAccounts(c *gin.Context) {
 }
 
 func GetUserAccounts(c *gin.Context) {
-	userId := c.Query("user_id")
+	userId := c.Param("id")
 
 	if userId == "" {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"message": "Send user_id",
+			"error":   "Missing user id in path param",
+			"message": "Missing user id in path param",
 		})
 	}
 
-	var user models.User
+	var accounts []models.Account
 
-	if err := initializers.DB.Preload("Accounts").First(&user, userId).Error; err != nil {
+	if err := initializers.DB.Preload("Transactions").Find(&accounts).Where("user_id = ?", userId).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			c.JSON(http.StatusNotFound, gin.H{
 				"error":   "Accounts not found",
@@ -64,7 +65,7 @@ func GetUserAccounts(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"message":  "User accounts fetched!",
-		"accounts": user.Accounts,
+		"accounts": accounts,
 	})
 }
 
