@@ -1,15 +1,36 @@
 package middleware
 
 import (
-	"fmt"
+	"context"
 	"log"
 	"net/http"
-	"os"
 	"strings"
 
+	firebase "firebase.google.com/go/v4"
+	"firebase.google.com/go/v4/auth"
 	"github.com/gin-gonic/gin"
-	"github.com/golang-jwt/jwt/v5"
 )
+
+func verifyIDToken(ctx context.Context, idToken string) *auth.Token {
+	app, err := firebase.NewApp(context.Background(), &firebase.Config{
+		ProjectID: "shareef-money",
+	})
+	if err != nil {
+		log.Fatalf("error initializing app: %v\n", err)
+	}
+
+	client, err := app.Auth(ctx)
+	if err != nil {
+		log.Fatalf("error getting Auth client: %v\n", err)
+	}
+
+	token, err := client.VerifyIDToken(ctx, idToken)
+	if err != nil {
+		log.Fatalf("error verifying ID token: %v\n", err)
+	}
+
+	return token
+}
 
 func CheckToken(c *gin.Context) {
 	tokenHeader := c.GetHeader("Authorization")
@@ -30,29 +51,12 @@ func CheckToken(c *gin.Context) {
 
 	tokenString := tokenHeader[7:]
 
-	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-		if _, ok := token.Method.(*jwt.SigningMethodRSA); !ok {
-			return nil, fmt.Errorf("unexpected signing token %v", token.Header["alg"])
-		}
-
-		publicKey, err := jwt.ParseRSAPublicKeyFromPEM([]byte(os.Getenv("NEXTAUTH_SECRET")))
-
-		if err != nil {
-			return nil, err
-		}
-
-		return publicKey, nil
-	})
-
-	log.Println("From Middleware", "err", err)
-
-	if err != nil || !token.Valid {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})
+	token := verifyIDToken(context.Background(), tokenString)
+	if token == nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"message": "Invalid token"})
 		c.Abort()
 		return
 	}
-
-	log.Println("From Middleware", tokenHeader, tokenHeader == "")
 
 	c.Next()
 }

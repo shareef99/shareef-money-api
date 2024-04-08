@@ -11,6 +11,7 @@ import (
 func init() {
 	initializers.LoadEnv()
 	initializers.ConnectDatabase()
+	initializers.InitializeFirebaseAppDefault()
 	migrate.SyncDatabase()
 }
 
@@ -18,9 +19,9 @@ func main() {
 	router := gin.Default()
 
 	config := cors.DefaultConfig()
-	config.AllowOrigins = []string{"http://localhost:3000"}
+	config.AllowOrigins = []string{"*"}
 	config.AllowMethods = []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"}
-	config.AllowHeaders = []string{"Authorization", "Content-Type"}
+	config.AllowHeaders = []string{"*"}
 	router.Use(cors.New(config))
 
 	apiV1 := router.Group("/api/v1")
