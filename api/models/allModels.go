@@ -36,7 +36,7 @@ type Category struct {
 	IsIncome      bool          `json:"is_income" gorm:"not null"`
 	UserID        uint          `json:"user_id" gorm:"not null"`
 	SubCategories []SubCategory `json:"sub_categories" gorm:"foreignKey:CategoryID;constraints:OnDelete:SET NULL"`
-	Transactions  []Transaction `json:"transaction" gorm:"foreignKey:CategoryID"`
+	Transactions  []Transaction `json:"transactions" gorm:"foreignKey:CategoryID"`
 }
 
 type SubCategory struct {

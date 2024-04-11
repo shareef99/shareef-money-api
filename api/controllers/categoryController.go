@@ -37,9 +37,21 @@ func CreateCategory(c *gin.Context) {
 		return
 	}
 
+	var subCategory = models.SubCategory{
+		Name:       "default",
+		CategoryID: category.ID,
+	}
+
+	if err := initializers.DB.Create(&subCategory).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error":   "Failed to create sub category",
+			"message": err.Error(),
+		})
+		return
+	}
+
 	c.JSON(http.StatusCreated, gin.H{
-		"message":  "Category Created",
-		"category": category,
+		"message": "Category Created",
 	})
 }
 
@@ -86,11 +98,11 @@ func GetCategory(c *gin.Context) {
 }
 
 func GetUserCategories(c *gin.Context) {
-	userId := c.Query("user_id")
+	userId := c.Param("id")
 
 	if userId == "" {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"message": "Missing user_id in query params",
+			"message": "Missing user_id in path params",
 		})
 		return
 	}

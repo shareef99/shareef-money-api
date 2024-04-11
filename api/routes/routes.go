@@ -21,7 +21,7 @@ func RegisterRoutes(api *gin.RouterGroup) {
 
 	api.GET("/categories", controllers.GetCategories)
 	api.GET("/categories/:id", controllers.GetCategory)
-	api.GET("/categories/by-user", controllers.GetUserCategories)
+	api.GET("/categories/by-user/:id", controllers.GetUserCategories)
 	api.POST("/categories", controllers.CreateCategory)
 	api.PUT("/categories", controllers.UpdateCategory)
 	api.DELETE("/categories/:id", controllers.DeleteCategory)
