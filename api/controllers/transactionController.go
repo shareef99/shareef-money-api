@@ -6,6 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/shareef99/shareef-money-api/api/models"
+	"github.com/shareef99/shareef-money-api/api/services"
 	"github.com/shareef99/shareef-money-api/initializers"
 )
 
@@ -170,5 +171,39 @@ func GetCategoryTransactions(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"message":      "Transactions Fetched!",
 		"transactions": transactions,
+	})
+}
+
+func GetMonthlyTransactions(c *gin.Context) {
+	userID := c.Query("user_id")
+	month := c.Query("month")
+
+	if userID == "" || month == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Missing user_id or month in query params",
+		})
+		return
+	}
+
+	dailyTransactions, err := services.GetDailyTransactionByMonth(month, userID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error":   "Failed to get transactions",
+			"message": err.Error(),
+		})
+		return
+	}
+
+	if len(dailyTransactions) == 0 {
+		c.JSON(http.StatusOK, gin.H{
+			"message":      "No transactions found for this month",
+			"transactions": []services.DailyTransaction{},
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message":      "Transactions Fetched!",
+		"transactions": dailyTransactions,
 	})
 }

@@ -64,4 +64,6 @@ type Transaction struct {
 	Notes         *string         `json:"notes"`
 	Amount        float32         `json:"amount" gorm:"not null"`
 	TransactionAt time.Time       `json:"transaction_at" gorm:"not null"`
+	Category      Category        `json:"category" gorm:"foreignKey:CategoryID"`
+	Account       Account         `json:"account" gorm:"foreignKey:AccountID"`
 }

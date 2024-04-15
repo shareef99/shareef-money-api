@@ -36,5 +36,6 @@ func RegisterRoutes(api *gin.RouterGroup) {
 	api.GET("/transactions/account/:id", controllers.GetAccountTransactions)
 	api.GET("/transactions/user/:id", controllers.GetUserTransactions)
 	api.GET("/transactions/category/:id", controllers.GetCategoryTransactions)
+	api.GET("/transactions/monthly", controllers.GetMonthlyTransactions)
 	api.POST("/transactions", controllers.CreateTransaction)
 }
