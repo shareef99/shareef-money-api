@@ -52,6 +52,26 @@ func CreateTransaction(c *gin.Context) {
 		return
 	}
 
+	account := models.Account{}
+
+	if err := initializers.DB.First(&account, body.AccountID).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error":   "Failed to get account",
+			"message": err.Error(),
+		})
+		return
+	}
+
+	account.Amount -= body.Amount
+
+	if err := initializers.DB.Save(&account).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error":   "Failed to update account balance",
+			"message": err.Error(),
+		})
+		return
+	}
+
 	c.JSON(http.StatusCreated, gin.H{
 		"message":     "Transaction created!",
 		"transaction": transaction,
