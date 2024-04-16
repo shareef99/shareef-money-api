@@ -21,6 +21,7 @@ func GetDailyTransactionByMonth(month string, userID string) ([]DailyTransaction
 		Preload("Category").
 		Preload("Account").
 		Where("user_id = ? AND EXTRACT(MONTH FROM transaction_at) = ?", userID, month).
+		Order("transaction_at ASC").
 		Find(&transactions).Error; err != nil {
 		return nil, err
 	}
